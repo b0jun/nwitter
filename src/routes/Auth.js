@@ -1,4 +1,4 @@
-import { authService } from 'fbase';
+import { authService, firebaseInstance } from 'fbase';
 import React, { useState } from 'react';
 
 const Auth = () => {
@@ -39,6 +39,18 @@ const Auth = () => {
   };
   const toggleAccount = () => setNewAccount((prev) => !prev);
 
+  const onSocialClick = async (e) => {
+    const {
+      target: { name },
+    } = e;
+    let provider;
+    if (name === 'google') {
+      provider = new firebaseInstance.auth.GoogleAuthProvider();
+    } // else ...추가되는 OAuth2.0에 적용하면됨
+    await authService.signInWithPopup(provider);
+    const data = await authService.signInWithPopup(provider);
+    console.log(data);
+  };
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -63,7 +75,9 @@ const Auth = () => {
         {newAccount ? 'Sign In' : 'Create Account'}
       </span>
       <div>
-        <button>Continue with Google</button>
+        <button name="google" onClick={onSocialClick}>
+          Continue with Google
+        </button>
       </div>
     </>
   );
